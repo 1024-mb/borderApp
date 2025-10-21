@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane prefHeight="2000.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fuelprices.fuelprices.homePageController">
+
+    <!-- TOP: Title -->
+    <top>
+        <GridPane prefHeight="66.0" BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 150%;" text="Latest" GridPane.rowIndex="0">
+                    <font>
+                        <Font size="30.0" />
+                    </font>
+                </Label>
+            </children>
+        </GridPane>
+    </top>
+
+    <!-- RIGHT: Settings + Exchange Rate Table -->
+    <right>
+        <VBox maxWidth="Infinity" minWidth="120.0" prefHeight="1934.0" prefWidth="199.0" spacing="10" BorderPane.alignment="CENTER">
+            <children>
+                <Button maxWidth="Infinity" prefHeight="59.0" prefWidth="210.0" text="Settings">
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@logos/settingsIcon.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+
+                <TableView maxHeight="140.0" prefHeight="140.0" prefWidth="188.0" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn minWidth="30" text="SGD" />
+                        <TableColumn minWidth="30" text="MYR" />
+                    </columns>
+                </TableView>
+            <Label fx:id="TimeLbl" prefHeight="27.0" prefWidth="236.0" text=" Label" />
+            <Label fx:id="DistanceLbl" layoutX="10.0" layoutY="229.0" prefHeight="27.0" prefWidth="221.0" text=" Label" />
+            <Label fx:id="CostLbl" layoutX="10.0" layoutY="266.0" prefHeight="27.0" prefWidth="221.0" text=" Label" />
+            </children>
+        </VBox>
+    </right>
+
+    <!-- CENTER: Scrollable Content -->
+    <center>
+        <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" prefWidth="460.0" BorderPane.alignment="CENTER">
+            <content>
+            <GridPane prefHeight="1849.0" prefWidth="439.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints fillHeight="false" maxHeight="770.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
+                  <RowConstraints fillHeight="false" maxHeight="770.0" minHeight="10.0" prefHeight="768.0" vgrow="SOMETIMES" />
+                  <RowConstraints fillHeight="false" maxHeight="770.0" minHeight="0.0" prefHeight="27.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="965.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="965.0" minHeight="10.0" prefHeight="288.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="965.0" minHeight="7.0" prefHeight="64.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="965.0" minHeight="0.0" prefHeight="49.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="965.0" minHeight="0.0" prefHeight="97.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="965.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="965.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="965.0" minHeight="10.0" prefHeight="377.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <HBox GridPane.rowIndex="4">
+                     <children>
+                              <VBox fx:id="Updates" prefHeight="362.0" prefWidth="458.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                        <Label prefHeight="63.0" prefWidth="444.0" style="-fx-font-size: 22;" text="  Updates" textAlignment="CENTER" GridPane.rowIndex="3" />
+                  <Label layoutX="10.0" layoutY="536.0" prefHeight="33.0" prefWidth="444.0" style="-fx-font-size: 22;" text="  Live Cam" textAlignment="CENTER" GridPane.rowIndex="9" />
+                  <Label prefHeight="63.0" prefWidth="444.0" style="-fx-font-size: 22;" text="  Petrol Prices/SGD" textAlignment="CENTER" GridPane.rowIndex="6" />
+                  <TableView fx:id="petrolPriceTable" editable="true" prefHeight="260.0" prefWidth="458.0" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                    <columns>
+                      <TableColumn fx:id="Country" prefWidth="105.0" text="C1" />
+                      <TableColumn fx:id="Esso" prefWidth="86.0" text="ESSO" />
+                        <TableColumn fx:id="Shell" prefWidth="89.0" text="SHELL" />
+                        <TableColumn fx:id="SPC" minWidth="0.0" prefWidth="101.0" text="SPC" />
+                        <TableColumn fx:id="Caltex" prefWidth="76.0" text="CALTEX" />
+                    </columns>
+                      <columnResizePolicy>
+                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                      </columnResizePolicy>
+                  </TableView>
+                        <Label prefHeight="32.0" prefWidth="433.0" style="-fx-font-size: 22;" text="  Nearest Checkpoint" />
+                  <AnchorPane prefHeight="466.0" prefWidth="439.0" GridPane.rowIndex="1">
+                     <children>
+                        <WebView fx:id="mapsWebView" layoutX="8.0" layoutY="-100.0" prefHeight="665.0" prefWidth="428.0" />
+                     </children></AnchorPane>
+               </children>
+            </GridPane>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
