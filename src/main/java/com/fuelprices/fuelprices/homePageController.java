@@ -7,6 +7,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
@@ -247,7 +248,7 @@ public class homePageController extends Application implements Initializable {
 
             hyperlink.setText("Google Maps ⤴");
 
-            hyperlink.setStyle("-fx-font-size: 13px;");
+            hyperlink.setStyle("-fx-font-size: 15.5px;");
             hyperlink.setPrefHeight(36);
             hyperlink.setMaxHeight(36);
             hyperlink.setMinHeight(36);
@@ -278,9 +279,9 @@ public class homePageController extends Application implements Initializable {
 
         for(int count=0; count <= 4; count++) {
             Hyperlink link = new Hyperlink(outURLs.get(count));
-            link.setText(outHeadlines.get(count));
+            link.setText("  " + outHeadlines.get(count));
 
-            link.setStyle("-fx-font-size: 13px;");
+            link.setStyle("-fx-font-size: 15.5px;");
             link.setPrefHeight(36);
             link.setMaxHeight(36);
             link.setMinHeight(36);
@@ -355,9 +356,10 @@ public class homePageController extends Application implements Initializable {
         HttpResponse<String> MYResponse = MYClient.send(getMY, HttpResponse.BodyHandlers.ofString());
         JSONObject MYResponseJSON = new JSONObject(MYResponse.body());
 
-        JSONObject rates = MYResponseJSON.getJSONObject("rates");
+        //JSONObject rates = MYResponseJSON.getJSONObject("rates");
 
-        double MYRSGD = rates.getDouble("SGD") / rates.getDouble("MYR");
+        //double MYRSGD = rates.getDouble("SGD") / rates.getDouble("MYR");
+        double MYRSGD = 0.31;
         double SGDMYR = (1/MYRSGD);
 
         price = String.format("S$ %.2f", actualPrice * MYRSGD);
@@ -490,6 +492,9 @@ public class homePageController extends Application implements Initializable {
 
     @Override
     public void start(Stage stage) throws Exception {
+        System.setProperty("prism.order", "sw");
+        System.setProperty("prism.vsync", "false");
+
         Document imgPage = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/woodlands.html#trafficCameras").get();
 
         String img1src = imgPage.getElementsByClass("card").get(0).child(1).attr("src");
@@ -517,7 +522,7 @@ public class homePageController extends Application implements Initializable {
         }
         for(int i=0; i<Woodlands.length; i++) {
             if(postcode.substring(0, 2).equals(Woodlands[i])) {
-                checkpointLbl.setText("Your Nearest Checkpoint Is Woodland");
+                checkpointLbl.setText("Your Nearest Checkpoint Is Woodlands");
                 img1lbl.setText("To Johor");
                 img2lbl.setText("To Singapore");
 
@@ -535,7 +540,66 @@ public class homePageController extends Application implements Initializable {
 
         Scene scene = new Scene(root);
         stage.setScene(scene);
+
         stage.show();
+
+        stage.iconifiedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) { // Restored from minimize
+                Platform.runLater(() -> {
+                    stage.setIconified(false);
+                    stage.hide();
+                    stage.show();
+                    stage.toFront();
+                });
+            }
+        });
+        stage.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                Platform.runLater(() -> {
+                    stage.setOpacity(1.0);
+                    stage.toFront();
+                });
+            } else {
+                stage.setOpacity(0.99); // forces compositor refresh on Windows
+            }
+        });
+        stage.iconifiedProperty().addListener((obs, wasMinimized, isNowMinimized) -> {
+            if (!isNowMinimized) {
+                // Defensive: restore if invisible after minimize
+                if (!stage.isShowing() || !stage.isFocused()) {
+                    Platform.runLater(() -> {
+                        try {
+                            stage.show();
+                            stage.toFront();
+                            stage.requestFocus();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            }
+        });
+        stage.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+            if (isFocused && !stage.isShowing()) {
+                stage.show();
+                stage.toFront();
+            }
+        });
+
+        Platform.runLater(() -> {
+            // Force a layout pulse + scene graph re-render
+            stage.sizeToScene();
+            stage.centerOnScreen();
+
+            final Scene scene1 = stage.getScene();
+            if (scene1 != null && scene1.getRoot() != null) {
+                scene1.getRoot().applyCss();
+                scene1.getRoot().requestLayout();
+            }
+        });
+
+
+
 
     }
 }

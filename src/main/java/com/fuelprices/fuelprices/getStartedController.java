@@ -1,5 +1,6 @@
 package com.fuelprices.fuelprices;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,7 +46,7 @@ public class getStartedController {
          Scene scene = sourceNode.getScene();
          Stage stage = (Stage) scene.getWindow();
 
-         newgetStarted.start(stage);
+        newgetStarted.start(stage);
     }
 
     public void skipThis(ActionEvent event) throws Exception {
