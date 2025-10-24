@@ -88,10 +88,9 @@ import static java.lang.Math.round;
 
 
 public class homePageController extends Application implements Initializable {
-    private final String API_KEY_GMAPS = "AIzaSyA-dvHUg38P0pI9THRQm434EPUiNvkLeFU";
-    private final String API_KEY_TOMTOM = "Jch5f06dmf3nSoPZZsYJ6vrm9KVNCaII";
-    private final String API_KEY_OPENMAP = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo5MTY1LCJmb3JldmVyIjpmYWxzZSwiaXNzIjoiT25lTWFwIiwiaWF0IjoxNzU4OTM4ODg4LCJuYmYiOjE3NTg5Mzg4ODgsImV4cCI6MTc1OTE5ODA4OCwianRpIjoiZDJmZTgxYWUtNWEzZC00Zjc3LThiMTItNTMyMzZkMGNlMWM4In0.lcXo-ZFhU8_GcdpsbRz9OXWBLkleNENTuGJtXP-URXITv-hOw-Wm3P74QG3dEaoPsezRn9z6WjfpJ4mDpJ1U-0COU8V5vHNuxfXSz70ISAR2yxygDOMYcq9B-G856z8ZcRIRLL-e3L8P7q-aLcPmW-B6CybZXLOFlgVj6_T1-acgar9Gh8hmSqmDe6JRXavC6sNukxgQbD7f6nEsR3yAp0KVE5d6z2j_ZFEqwHDn750ix5u79GatjKvZIXKNESXX6zktmz6vvdsxOMwu2-JdtWRZ8rZtOATiPUX7V9PLc8BUDmWr5M-yCxk92UYO3kB6o2KdUwPlpbrK-phpW0lZ4Q";
-
+    private final String API_KEY_GMAPS = System.getenv("API_KEY_GMAPS");
+    private final String API_KEY_TOMTOM = System.getenv("API_KEY_TOMTOM");
+    private final String API_KEY_OPENMAP = System.getenv("API_KEY_OPENMAP");;
     @FXML
     private ImageView img1;
 
