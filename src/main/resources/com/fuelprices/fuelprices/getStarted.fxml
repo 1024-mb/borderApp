@@ -11,7 +11,7 @@
 
 <AnchorPane prefHeight="689.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fuelprices.fuelprices.getStartedController">
    <children>
-      <Text layoutX="6.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="GET STARTED" textAlignment="CENTER" wrappingWidth="588.43798828125">
+      <Text fx:id="topBanner" layoutX="6.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="GET STARTED" textAlignment="CENTER" wrappingWidth="588.43798828125">
          <font>
             <Font size="33.0" />
          </font>
@@ -21,12 +21,12 @@
             <Font size="22.0" />
          </font>
       </TextField>
-      <Text layoutX="20.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter your starting postcode - this helps us accurately calculate distances and give you a better experience. It can be changed at any time. All data is stored on your device only" textAlignment="CENTER" wrappingWidth="543.205078125">
+      <Text fx:id="UserMsg" layoutX="20.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter your starting postcode - this helps us accurately calculate distances and give you a better experience. It can be changed at any time. All data is stored on your device only" textAlignment="CENTER" wrappingWidth="543.205078125">
          <font>
             <Font size="21.0" />
          </font></Text>
       <Button fx:id="submitBtn" layoutX="455.0" layoutY="397.0" mnemonicParsing="false" onAction="#submitPostcode" prefHeight="44.0" prefWidth="84.0" text="Submit" />
       <Button fx:id="skipBtn" layoutX="33.0" layoutY="397.0" mnemonicParsing="false" onAction="#skipThis" prefHeight="44.0" prefWidth="109.0" text="Skip This" />
-      <Label fx:id="errorLbl" alignment="CENTER" layoutX="6.0" layoutY="429.0" prefHeight="27.0" prefWidth="588.0" textAlignment="CENTER" textFill="#eb0b00"/>
+      <Label fx:id="errorLbl" alignment="CENTER" layoutX="6.0" layoutY="429.0" prefHeight="27.0" prefWidth="588.0" textAlignment="CENTER" textFill="#eb0b00" />
    </children>
 </AnchorPane>

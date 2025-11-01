@@ -22,6 +22,7 @@ module com.fuelprices.fuelprices {
     requires org.seleniumhq.selenium.api;
     requires org.seleniumhq.selenium.chrome_driver;
     requires htmlunit;
+    requires javafx.base;
 
     opens com.fuelprices.fuelprices to javafx.fxml;
     exports com.fuelprices.fuelprices;

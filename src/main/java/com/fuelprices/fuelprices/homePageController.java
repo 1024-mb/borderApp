@@ -12,9 +12,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.SwingNode;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -66,7 +68,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.lynden.gmapsfx.GoogleMapView.*;
@@ -98,10 +99,14 @@ public class homePageController extends Application implements Initializable {
     private ImageView img2;
     @FXML
     private ImageView img3;
+
     @FXML
     private ImageView img4;
+
     boolean clicked = false;
 
+    @FXML
+    private ScrollPane scrollPane;
     @FXML
     private TableView<PetrolPrices> petrolPriceTable;
     @FXML
@@ -129,7 +134,6 @@ public class homePageController extends Application implements Initializable {
 
     @FXML
     private TextField SGDIn;
-
     @FXML
     private TextField MYRIn;
 
@@ -148,7 +152,20 @@ public class homePageController extends Application implements Initializable {
     @FXML
     private Label img2lbl;
     @FXML
+    private Label img3lbl;
+    @FXML
+    private Label img4lbl;
+    @FXML
     private Label checkpointLbl;
+    @FXML
+    private Hyperlink originLink;
+    @FXML
+    private ToggleGroup checkpointToggle;
+    @FXML
+    private RadioButton woodlandsRoute;
+    @FXML
+    private RadioButton tuasRoute;
+
 
     public void commonHandler(ImageView imageView) {
         if(clicked) {
@@ -182,7 +199,6 @@ public class homePageController extends Application implements Initializable {
 
     public void getRoute(String Postcode) {
         try {
-
             Postcode = Postcode + ", Singapore";
                     // road, mall, mall, legoland, denga bay
 
@@ -217,7 +233,8 @@ public class homePageController extends Application implements Initializable {
 
                 if(days>1) times[i] = String.format("%d days %.0f hours", days, time);
                 else if(days==1) times[i] = String.format("1 day %.0f hours", days, time);
-                else if(time>=1) times[i] = String.format("%.1f hours", time);
+                else if(time>1) times[i] = String.format("%.1f hours", time);
+                else if(time<1.1 && time>=1.0) times[i] = "1 hour";
                 else times[i] = String.format("%.0f mins", time * 60);
 
             }
@@ -257,6 +274,21 @@ public class homePageController extends Application implements Initializable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @FXML
+    public void handleClick(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("getStarted.fxml"));
+        Parent root = loader.load();
+
+        // Get the controller linked to the FXML
+        getStartedController controller = loader.getController();
+        controller.setUpdateText();
+
+        // Get stage from event
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     public void getUpdates() throws IOException, InterruptedException {
@@ -492,7 +524,9 @@ public class homePageController extends Application implements Initializable {
     @Override
     public void start(Stage stage) throws Exception {
         System.setProperty("prism.order", "sw");
+        System.setProperty("prism.text", "t2k");
         System.setProperty("prism.vsync", "false");
+        System.setProperty("javafx.animation.fullspeed", "true");
 
         Document imgPage = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/woodlands.html#trafficCameras").get();
 
@@ -500,37 +534,128 @@ public class homePageController extends Application implements Initializable {
         String img2src = imgPage.getElementsByClass("card").get(1).child(1).attr("src");
         String img3src = imgPage.getElementsByClass("card").get(2).child(1).attr("src");
         String img4src = imgPage.getElementsByClass("card").get(3).child(1).attr("src");
+
         getUpdates();
         String postcode = getJourneyData();
+        originLink.setText(String.format("From %s", postcode));
 
         String[] Tuas = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "81"};
         String[] Woodlands = {"25", "26", "27", "28", "72", "73", "75", "76", "77", "78", "79", "80", "82"};
 
         for(int i=0; i<Tuas.length; i++) {
             if(postcode.substring(0, 2).equals(Tuas[i])) {
-                checkpointLbl.setText("Your Nearest Checkpoint Is Tuas");
-                img1lbl.setText("To Johor");
-                img2lbl.setText("To Singapore");
-
+                checkpointToggle.selectToggle(tuasRoute);
+                checkpointLbl.setText("Your Nearest Checkpoint is Tuas");
                 javafx.scene.image.Image image1 = new javafx.scene.image.Image(img1src, true);
                 img1.setImage(image1);
+                img1lbl.setText("Towards Johor (View From Second Link)");
+
                 javafx.scene.image.Image image2 = new javafx.scene.image.Image(img2src, true);
                 img2.setImage(image2);
+                img2lbl.setText("Towards Johor (Tuas Checkpoint)");
+
+                Document ayeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/aye.html#trafficCameras").get();
+                String ayeImg1 = ayeImg.getElementsByClass("card").get(0).child(1).attr("src");
+                String ayeImg2 = ayeImg.getElementsByClass("card").get(3).child(1).attr("src");
+
+                javafx.scene.image.Image image3 = new javafx.scene.image.Image(ayeImg1, true);
+                img3.setImage(image3);
+                img3lbl.setText("Towards Johor (After Tuas West Road)");
+
+                img4lbl.setText("Towards Singapore (From Jln Ahmad Ibrahim)");
+                javafx.scene.image.Image image4 = new javafx.scene.image.Image(ayeImg2, true);
+                img4.setImage(image4);
             }
 
         }
         for(int i=0; i<Woodlands.length; i++) {
             if(postcode.substring(0, 2).equals(Woodlands[i])) {
-                checkpointLbl.setText("Your Nearest Checkpoint Is Woodlands");
-                img1lbl.setText("To Johor");
-                img2lbl.setText("To Singapore");
-
+                checkpointToggle.selectToggle(woodlandsRoute);
+                checkpointLbl.setText("Your Nearest Checkpoint is Woodlands");
                 javafx.scene.image.Image image1 = new javafx.scene.image.Image(img3src, true);
                 img1.setImage(image1);
+                img1lbl.setText("Towards Johor (From Woodland's Causeway)");
+
+                // set the one towards singapore as the last image, with the johor ones before it
                 javafx.scene.image.Image image2 = new javafx.scene.image.Image(img4src, true);
-                img2.setImage(image2);
+                img4.setImage(image2);
+                img4lbl.setText("Towards Singapore (From Woodland's Checkpoint)");
+
+                Document bkeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/bke.html#trafficCameras").get();
+                String bkeImg1 = bkeImg.getElementsByClass("card").get(3).child(1).attr("src");
+                String bkeImg2 = bkeImg.getElementsByClass("card").get(5).child(1).attr("src");
+
+                javafx.scene.image.Image image3 = new javafx.scene.image.Image(bkeImg1, true);
+                img2.setImage(image3);
+                img2lbl.setText("Towards Johor (Exit 5 To KJE)");
+
+                javafx.scene.image.Image image4 = new javafx.scene.image.Image(bkeImg2, true);
+                img3.setImage(image4);
+                img3lbl.setText("Towards Johor (Woodlands Flyover)");
+
             }
         }
+
+        checkpointToggle.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && newValue instanceof RadioButton) {
+                String selected = ((RadioButton) newValue).getText();
+
+                if(selected.equals("Tuas Route")) {
+                    javafx.scene.image.Image image1 = new javafx.scene.image.Image(img1src, true);
+                    img1.setImage(image1);
+                    img1lbl.setText("Towards Johor (View From Second Link)");
+
+                    javafx.scene.image.Image image2 = new javafx.scene.image.Image(img2src, true);
+                    img2.setImage(image2);
+                    img2lbl.setText("Towards Johor (Tuas Checkpoint)");
+
+                    Document ayeImg = null;
+                    try {
+                        ayeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/aye.html#trafficCameras").get();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String ayeImg1 = ayeImg.getElementsByClass("card").get(0).child(1).attr("src");
+                    String ayeImg2 = ayeImg.getElementsByClass("card").get(3).child(1).attr("src");
+
+                    javafx.scene.image.Image image3 = new javafx.scene.image.Image(ayeImg1, true);
+                    img3.setImage(image3);
+                    img3lbl.setText("Towards Johor (After Tuas West Road)");
+
+                    img4lbl.setText("Towards Singapore (From Jln Ahmad Ibrahim)");
+                    javafx.scene.image.Image image4 = new javafx.scene.image.Image(ayeImg2, true);
+                    img4.setImage(image4);
+                }
+                else {
+                    javafx.scene.image.Image image1 = new javafx.scene.image.Image(img3src, true);
+                    img1.setImage(image1);
+                    img1lbl.setText("Towards Johor (From Woodland's Causeway)");
+
+                    // set the one towards singapore as the last image, with the johor ones before it
+                    javafx.scene.image.Image image2 = new javafx.scene.image.Image(img4src, true);
+                    img4.setImage(image2);
+                    img4lbl.setText("Towards Singapore (From Woodland's Checkpoint)");
+
+                    Document bkeImg = null;
+                    try {
+                        bkeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/bke.html#trafficCameras").get();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String bkeImg1 = bkeImg.getElementsByClass("card").get(3).child(1).attr("src");
+                    String bkeImg2 = bkeImg.getElementsByClass("card").get(5).child(1).attr("src");
+
+                    javafx.scene.image.Image image3 = new javafx.scene.image.Image(bkeImg1, true);
+                    img2.setImage(image3);
+                    img2lbl.setText("Towards Johor (Exit 5 To KJE)");
+
+                    javafx.scene.image.Image image4 = new javafx.scene.image.Image(bkeImg2, true);
+                    img3.setImage(image4);
+                    img3lbl.setText("Towards Johor (Woodlands Flyover)");
+                }
+
+            }
+        });
 
         getRoute(postcode);
 
@@ -541,6 +666,7 @@ public class homePageController extends Application implements Initializable {
         stage.setScene(scene);
 
         stage.show();
+        FxStabilizer.stabilize(stage);
 
         stage.iconifiedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) { // Restored from minimize
@@ -548,6 +674,7 @@ public class homePageController extends Application implements Initializable {
                     stage.setIconified(false);
                     stage.hide();
                     stage.show();
+                    FxStabilizer.stabilize(stage);
                     stage.toFront();
                 });
             }
@@ -569,6 +696,7 @@ public class homePageController extends Application implements Initializable {
                     Platform.runLater(() -> {
                         try {
                             stage.show();
+                            FxStabilizer.stabilize(stage);
                             stage.toFront();
                             stage.requestFocus();
                         } catch (Exception e) {
@@ -581,6 +709,7 @@ public class homePageController extends Application implements Initializable {
         stage.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
             if (isFocused && !stage.isShowing()) {
                 stage.show();
+                FxStabilizer.stabilize(stage);
                 stage.toFront();
             }
         });
