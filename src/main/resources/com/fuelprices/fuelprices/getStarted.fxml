@@ -28,5 +28,10 @@
       <Button fx:id="submitBtn" layoutX="455.0" layoutY="397.0" mnemonicParsing="false" onAction="#submitPostcode" prefHeight="44.0" prefWidth="84.0" text="Submit" />
       <Button fx:id="skipBtn" layoutX="33.0" layoutY="397.0" mnemonicParsing="false" onAction="#skipThis" prefHeight="44.0" prefWidth="109.0" text="Skip This" />
       <Label fx:id="errorLbl" alignment="CENTER" layoutX="6.0" layoutY="429.0" prefHeight="27.0" prefWidth="588.0" textAlignment="CENTER" textFill="#eb0b00" />
+      <Label fx:id="errorLbl" alignment="CENTER" layoutX="47.0" layoutY="476.0" prefHeight="17.0" prefWidth="457.0" textAlignment="CENTER" textFill="#ff2929">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

@@ -1,23 +1,13 @@
 package com.fuelprices.fuelprices;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
+
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,7 +20,7 @@ public class getStarted extends Application {
 
             if (!(line1==null)) {
                 if(!line1.equals("")){
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("homePage2.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("homePage.fxml"));
                     Parent root = loader.load();
 
                     homePageController controller = loader.getController();

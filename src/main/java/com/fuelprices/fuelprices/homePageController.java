@@ -1,17 +1,14 @@
 package com.fuelprices.fuelprices;
 
-import com.lynden.gmapsfx.GoogleMapView;
 import com.lynden.gmapsfx.javascript.object.*;
 import com.lynden.gmapsfx.service.directions.*;
-import javafx.animation.Interpolator;
-import javafx.animation.Transition;
+
 import javafx.application.Application;
-import javafx.application.HostServices;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Worker;
-import javafx.embed.swing.SwingNode;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,65 +24,37 @@ import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
+
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import me.friwi.jcefmaven.CefAppBuilder;
-import me.friwi.jcefmaven.CefInitializationException;
-import me.friwi.jcefmaven.UnsupportedPlatformException;
-import org.cef.CefApp;
-import org.cef.CefClient;
-import org.cef.browser.CefBrowser;
 import org.htmlunit.BrowserVersion;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.HtmlPage;
-import org.json.JSONArray;
+
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+
 
 import com.lynden.gmapsfx.GoogleMapView.*;
-import com.lynden.gmapsfx.MapComponentInitializedListener;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import javax.swing.*;
 
-import static com.almasb.fxgl.core.math.FXGLMath.floor;
-import static java.lang.Math.round;
-// import com.lynden.gmapsfx.javascript.object.MapType;
 
 
 public class homePageController extends Application implements Initializable {
@@ -278,12 +247,10 @@ public class homePageController extends Application implements Initializable {
 
     @FXML
     public void handleClick(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("getStarted.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("settingsPage.fxml"));
         Parent root = loader.load();
 
         // Get the controller linked to the FXML
-        getStartedController controller = loader.getController();
-        controller.setUpdateText();
 
         // Get stage from event
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -659,7 +626,7 @@ public class homePageController extends Application implements Initializable {
 
         getRoute(postcode);
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("homePage2.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("homePage.fxml"));
         Parent root = loader.load();
 
         Scene scene = new Scene(root);
