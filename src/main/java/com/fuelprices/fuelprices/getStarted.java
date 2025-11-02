@@ -22,14 +22,13 @@ public class getStarted extends Application {
                 if(!line1.equals("")){
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("homePage.fxml"));
                     Parent root = loader.load();
-
                     homePageController controller = loader.getController();
-                    controller.start(stage);
+
+                    controller.start(stage);  // a custom method you create
 
                     Scene scene = new Scene(root);
                     stage.setScene(scene);
                     stage.show();
-                    FxStabilizer.stabilize(stage);
                 }
                 else {
                     loadStartPage(stage);
@@ -42,9 +41,6 @@ public class getStarted extends Application {
 
         } catch(IOException e) {
             e.printStackTrace();
-
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

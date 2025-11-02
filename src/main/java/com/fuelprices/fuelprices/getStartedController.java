@@ -39,16 +39,6 @@ public class getStartedController {
                 } catch (IOException e) {
                     errorLbl.setText("Please Enter A Valid Postcode");
                 }
-                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("C:\\Users\\FUJITSU\\JavaPrograms\\fuelPrices\\src\\main\\resources\\com\\fuelprices\\fuelprices\\fuelConsumption.txt"))) {
-                    bufferedWriter.write("14.9");
-                } catch (IOException e) {
-                    errorLbl.setText("Sorry - an error occured. Please try again later.");
-                }
-                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("C:\\Users\\FUJITSU\\JavaPrograms\\fuelPrices\\src\\main\\resources\\com\\fuelprices\\fuelprices\\fuelTank.txt"))) {
-                    bufferedWriter.write("50");
-                } catch (IOException e) {
-                    errorLbl.setText("Sorry - an error occured. Please try again later.");
-                }
             }
         }
          getStarted newgetStarted = new getStarted();

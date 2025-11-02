@@ -1,0 +1,47 @@
+.root, .border-pane, .anchor-pane, .scroll-pane, .scroll-pane > .viewport, .grid-pane {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #222;
+
+}
+#latest_header {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2F2F2F;
+    -fx-padding: 20 0 10 0;
+}
+.button {
+    -fx-background-color:  #dddddd;
+    -fx-font-size:  16px;
+    -fx-border-radius: 10px
+}
+
+.button:hover {
+    -fx-background-color: #adadad;
+}
+#backBtn:hover {
+    -fx-background-color: #aa1409;
+}
+
+#updateBtn:hover {
+    -fx-background-color: #2f6a31;
+}
+
+.text-field {
+    border-radius: 3px;
+}
+
+.hyperlink {
+    -fx-underline: false;
+    -fx-text-fill: #002ed6;
+}
+
+.scroll-pane {
+    -fx-vbar-policy: never;
+    -fx-hbar-policy: never;
+}
+
+.root {
+    -fx-font-family: Arial, Helvetica, sans-serif;
+    letter-spacing: 5px;
+    font-size: 15px;
+}

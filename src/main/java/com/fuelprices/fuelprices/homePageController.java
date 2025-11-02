@@ -1,14 +1,13 @@
 package com.fuelprices.fuelprices;
 
-import com.lynden.gmapsfx.javascript.object.*;
-import com.lynden.gmapsfx.service.directions.*;
-
 import javafx.application.Application;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +26,7 @@ import java.net.http.HttpResponse;
 
 import java.util.ArrayList;
 
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -36,6 +36,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -45,22 +46,22 @@ import org.htmlunit.WebClient;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.HtmlPage;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 
-import com.lynden.gmapsfx.GoogleMapView.*;
-
-import javax.swing.*;
-
-
-
 public class homePageController extends Application implements Initializable {
     private final String API_KEY_GMAPS = System.getenv("API_KEY_GMAPS");
     private final String API_KEY_TOMTOM = System.getenv("API_KEY_TOMTOM");
+    private final String API_KEY_DATAMALL = System.getenv("API_KEY_DATAMALL");
     private final String API_KEY_OPENMAP = System.getenv("API_KEY_OPENMAP");;
+
+    @FXML
+    public BorderPane homePane;
     @FXML
     private ImageView img1;
 
@@ -136,6 +137,7 @@ public class homePageController extends Application implements Initializable {
     private RadioButton tuasRoute;
 
 
+
     public void commonHandler(ImageView imageView) {
         if(clicked) {
             imageView.setFitHeight(259.2);
@@ -166,7 +168,7 @@ public class homePageController extends Application implements Initializable {
         return Postcode;
     }
 
-    public void getRoute(String Postcode) {
+    public ObservableList<Routes> getRoute(String Postcode) {
         try {
             Postcode = Postcode + ", Singapore";
                     // road, mall, mall, legoland, denga bay
@@ -215,30 +217,7 @@ public class homePageController extends Application implements Initializable {
                     new Routes(destinationDisplay[3], distances[3], times[3]),
                     new Routes(destinationDisplay[4], distances[4], times[4]));
 
-            routeTable.setItems(data);
-
-            Hyperlink hyperlink = new Hyperlink();
-            final String URLPostcode = Postcode.replaceAll(",", "").replaceAll(" ", "+");
-
-            hyperlink.setOnAction(event -> {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://www.google.com/maps/dir/" +
-                            URLPostcode));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            hyperlink.setText("Google Maps ⤴");
-
-            hyperlink.setStyle("-fx-font-size: 15.5px;");
-            hyperlink.setPrefHeight(36);
-            hyperlink.setMaxHeight(36);
-            hyperlink.setMinHeight(36);
-            GMapsLink.getChildren().add(hyperlink);
-
+            return data;
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -258,47 +237,38 @@ public class homePageController extends Application implements Initializable {
         stage.show();
     }
 
-    public void getUpdates() throws IOException, InterruptedException {
-        Document doc = Jsoup.connect("https://www.straitstimes.com/tags/causeway").get();
-        Elements headlines = doc.getElementsByClass("font-header-sm-semibold");
-        Elements urls = doc.getElementsByClass("select-none gap-x-04 text-primary flex flex-nowrap items-start tablet:left-divider card basis-full");
+    public class Update {
+        ObservableList<PetrolPrices> petrolPriceData;
+        double MYRSGD, SGDMYR;
+        String[] updates = new String[100];
+    }
 
+    public Update getUpdates() throws IOException, InterruptedException {
+        Update update = new Update();
 
-        ArrayList<String> outHeadlines = new ArrayList<>();
-        ArrayList<String> outURLs = new ArrayList<>();
+        final HttpClient generalClient = HttpClient.newHttpClient();
+        HttpRequest getUpdates = HttpRequest.newBuilder()
+                .uri(URI.create("https://datamall2.mytransport.sg/ltaodataservice/TrafficIncidents"))
+                .header("AccountKey", "DYcp2xF6QNKde4zceePCkw==")
+                .GET()
+                .build();
 
-        for(int count=0; count<headlines.size(); count++) {
-            String out = headlines.get(count).text();
-            String link = urls.get(count).attr("abs:href");
+        HttpResponse<String> UpdatesResponse = generalClient.send(getUpdates, HttpResponse.BodyHandlers.ofString());
+        JSONObject UpdatesJson = new JSONObject(UpdatesResponse.body());
+        JSONArray jsonArray = UpdatesJson.getJSONArray("value");
+        //["BKE", "SLE", "CTE", "TPE", "AYE", "PIE", "Tuas"]
 
-            outHeadlines.add(out);
-            outURLs.add(link);
-        }
+        JSONObject current;
+        String msg;
+        int maxIndex = Math.min(jsonArray.length(), 13);
 
-        for(int count=0; count <= 4; count++) {
-            Hyperlink link = new Hyperlink(outURLs.get(count));
-            link.setText("  " + outHeadlines.get(count));
+        for(int i = 0; i < maxIndex; i++) {
+            current = (JSONObject) jsonArray.get(i);
+            msg = current.getString("Message");
+            System.out.println(msg);
 
-            link.setStyle("-fx-font-size: 15.5px;");
-            link.setPrefHeight(36);
-            link.setMaxHeight(36);
-            link.setMinHeight(36);
-            link.setPrefWidth(900);
-            VBox.setVgrow(link, Priority.ALWAYS);
+            update.updates[i] = "    " + msg;
 
-
-            int finalCount = count;
-            link.setOnAction(event -> {
-                try {
-                    Desktop.getDesktop().browse(new URI(outURLs.get(finalCount)));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            Updates.getChildren().add(link);
         }
 
         final WebClient webClient = new WebClient(BrowserVersion.CHROME);
@@ -345,22 +315,25 @@ public class homePageController extends Application implements Initializable {
         double actualPrice = Double.parseDouble(price.replaceAll("RM ", ""));
 
 
-        HttpClient MYClient = HttpClient.newHttpClient();
+
         HttpRequest getMY = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.exchangeratesapi.io/v1/latest?access_key=aab65faca79a2abd4c8761760eb607bc&symbols=SGD,MYR&format=1"))
                 .GET()
                 .build();
 
-        HttpResponse<String> MYResponse = MYClient.send(getMY, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> MYResponse = generalClient.send(getMY, HttpResponse.BodyHandlers.ofString());
         JSONObject MYResponseJSON = new JSONObject(MYResponse.body());
 
-        //JSONObject rates = MYResponseJSON.getJSONObject("rates");
+        try {
+            JSONObject rates = MYResponseJSON.getJSONObject("rates");
+            update.MYRSGD = rates.getDouble("SGD") / rates.getDouble("MYR");
+        } catch (JSONException e) {
+            update.MYRSGD = 0.31;
+            e.printStackTrace();
+        }
+        update.SGDMYR = (1/update.MYRSGD);
 
-        //double MYRSGD = rates.getDouble("SGD") / rates.getDouble("MYR");
-        double MYRSGD = 0.31;
-        double SGDMYR = (1/MYRSGD);
-
-        price = String.format("S$ %.2f", actualPrice * MYRSGD);
+        price = String.format("S$ %.2f", actualPrice * update.MYRSGD);
 
         final ObservableList<PetrolPrices> data = FXCollections.observableArrayList(
                 new PetrolPrices("SG", prices[0], prices[1], prices[2], prices[3]),
@@ -368,43 +341,10 @@ public class homePageController extends Application implements Initializable {
 
         );
 
-        petrolPriceTable.setItems(data);
+        //petrolPriceTable.setItems(data);
+        update.petrolPriceData = data;
 
-
-        SGDIn.textProperty().addListener((observable, oldValue, newValue) -> {
-            String textIn = SGDIn.getText();
-
-            try {
-                double amount = Double.parseDouble(textIn);
-                MYRIn.setText(String.format("%.2f", amount * SGDMYR));
-            }
-            catch(Exception e) {
-                MYRIn.setPromptText("Enter a number");
-            }
-
-            if(textIn.equals("")) {
-                MYRIn.setText("");
-            }
-
-        });
-
-        MYRIn.textProperty().addListener((observable, oldValue, newValue) -> {
-            String textIn = MYRIn.getText();
-
-            try {
-                double amount = Double.parseDouble(textIn);
-                SGDIn.setText(String.format("%.2f", amount * MYRSGD));
-            }
-            catch(Exception e) {
-                SGDIn.setPromptText("Enter a number");
-            }
-
-            if(textIn.equals("")) {
-                SGDIn.setText("");
-            }
-
-        });
-
+        return update;
     }
 
 
@@ -463,20 +403,6 @@ public class homePageController extends Application implements Initializable {
             HttpResponse<String> MYResponse = mapsClient.send(getMatrixCheckPoint, HttpResponse.BodyHandlers.ofString());
             MYResponseJSON = new JSONObject(MYResponse.body());
 
-            // Code for instructions
-//                     .header("X-Goog-FieldMask", "routes.duration,routes.distanceMet" +
-//                            "ers,routes.navigationInstruction")
-//
-//
-//            JSONArray instructionsJSON = (JSONArray) MYResponseJSON.getJSONArray("navigationInstruction");
-//            String[] instructions = new String[instructionsJSON.length()];
-//
-//            for(int i=0; i<instructionsJSON.length(); i++) {
-//                JSONObject instruction = (JSONObject) instructionsJSON.get(i);
-//
-//                instructions[i] = instruction.getString("instructions");;
-//            }
-            
             routeData = (JSONObject) MYResponseJSON.getJSONArray("routes").get(0);
 
             time = routeData.getString("duration");
@@ -487,6 +413,15 @@ public class homePageController extends Application implements Initializable {
             return Result;
     }
 
+    public class CheckpointData {
+        String img1src, img2src, img3src, img4src, img1lbl, img2lbl, img3lbl, img4lbl;
+        String checkpointLbl;
+        String postcode, originLink;
+        ObservableList<Routes> result;
+        Hyperlink hyperlink;
+        Update update;
+        javafx.scene.image.Image image1, image2, image3, image4;
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -495,206 +430,325 @@ public class homePageController extends Application implements Initializable {
         System.setProperty("prism.vsync", "false");
         System.setProperty("javafx.animation.fullspeed", "true");
 
-        Document imgPage = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/woodlands.html#trafficCameras").get();
+        Task<CheckpointData> task = new Task<>() {
+            @Override
+            protected CheckpointData call() throws Exception {
+                petrolPriceTable.setPlaceholder(new Label("Loading....."));
+                routeTable.setPlaceholder(new Label("Loading....."));
 
-        String img1src = imgPage.getElementsByClass("card").get(0).child(1).attr("src");
-        String img2src = imgPage.getElementsByClass("card").get(1).child(1).attr("src");
-        String img3src = imgPage.getElementsByClass("card").get(2).child(1).attr("src");
-        String img4src = imgPage.getElementsByClass("card").get(3).child(1).attr("src");
+                CheckpointData checkpoint = new CheckpointData();
+                Document imgPage = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/woodlands.html#trafficCameras").get();
 
-        getUpdates();
-        String postcode = getJourneyData();
-        originLink.setText(String.format("From %s", postcode));
+                String img1src = imgPage.getElementsByClass("card").get(0).child(1).attr("src");
+                String img2src = imgPage.getElementsByClass("card").get(1).child(1).attr("src");
+                String img3src = imgPage.getElementsByClass("card").get(2).child(1).attr("src");
+                String img4src = imgPage.getElementsByClass("card").get(3).child(1).attr("src");
 
-        String[] Tuas = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "81"};
-        String[] Woodlands = {"25", "26", "27", "28", "72", "73", "75", "76", "77", "78", "79", "80", "82"};
+                String postcode = getJourneyData();
+                checkpoint.postcode = postcode;
+                checkpoint.originLink = (String.format("From %s, Singapore", postcode));
 
-        for(int i=0; i<Tuas.length; i++) {
-            if(postcode.substring(0, 2).equals(Tuas[i])) {
-                checkpointToggle.selectToggle(tuasRoute);
-                checkpointLbl.setText("Your Nearest Checkpoint is Tuas");
-                javafx.scene.image.Image image1 = new javafx.scene.image.Image(img1src, true);
-                img1.setImage(image1);
-                img1lbl.setText("Towards Johor (View From Second Link)");
+                String[] Tuas = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
+                        "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "29", "30", "31", "32", "33", "34", "35", "36",
+                        "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56",
+                        "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "81"};
+                String[] Woodlands = {"25", "26", "27", "28", "72", "73", "75", "76", "77", "78", "79", "80", "82"};
 
-                javafx.scene.image.Image image2 = new javafx.scene.image.Image(img2src, true);
-                img2.setImage(image2);
-                img2lbl.setText("Towards Johor (Tuas Checkpoint)");
+                for (int i = 0; i < Tuas.length; i++) {
 
-                Document ayeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/aye.html#trafficCameras").get();
-                String ayeImg1 = ayeImg.getElementsByClass("card").get(0).child(1).attr("src");
-                String ayeImg2 = ayeImg.getElementsByClass("card").get(3).child(1).attr("src");
+                    if (postcode.substring(0, 2).equals(Tuas[i])) {
+                        checkpoint.checkpointLbl = ("Your Nearest Checkpoint is Tuas");
+                        checkpoint.img1lbl = ("Towards Johor (View From Second Link)");
+                        checkpoint.image1 = new javafx.scene.image.Image(img1src, true);
 
-                javafx.scene.image.Image image3 = new javafx.scene.image.Image(ayeImg1, true);
-                img3.setImage(image3);
-                img3lbl.setText("Towards Johor (After Tuas West Road)");
 
-                img4lbl.setText("Towards Singapore (From Jln Ahmad Ibrahim)");
-                javafx.scene.image.Image image4 = new javafx.scene.image.Image(ayeImg2, true);
-                img4.setImage(image4);
-            }
+                        checkpoint.image2 = new javafx.scene.image.Image(img2src, true);
+                        checkpoint.img2lbl = ("Towards Johor (Tuas Checkpoint)");
 
-        }
-        for(int i=0; i<Woodlands.length; i++) {
-            if(postcode.substring(0, 2).equals(Woodlands[i])) {
-                checkpointToggle.selectToggle(woodlandsRoute);
-                checkpointLbl.setText("Your Nearest Checkpoint is Woodlands");
-                javafx.scene.image.Image image1 = new javafx.scene.image.Image(img3src, true);
-                img1.setImage(image1);
-                img1lbl.setText("Towards Johor (From Woodland's Causeway)");
+                        Document ayeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/aye.html#trafficCameras").get();
+                        checkpoint.img3src = ayeImg.getElementsByClass("card").get(0).child(1).attr("src");
+                        checkpoint.image3 = new javafx.scene.image.Image(img3src, true);
 
-                // set the one towards singapore as the last image, with the johor ones before it
-                javafx.scene.image.Image image2 = new javafx.scene.image.Image(img4src, true);
-                img4.setImage(image2);
-                img4lbl.setText("Towards Singapore (From Woodland's Checkpoint)");
+                        checkpoint.img4src = ayeImg.getElementsByClass("card").get(3).child(1).attr("src");
+                        checkpoint.image4 = new javafx.scene.image.Image(img4src, true);
 
-                Document bkeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/bke.html#trafficCameras").get();
-                String bkeImg1 = bkeImg.getElementsByClass("card").get(3).child(1).attr("src");
-                String bkeImg2 = bkeImg.getElementsByClass("card").get(5).child(1).attr("src");
-
-                javafx.scene.image.Image image3 = new javafx.scene.image.Image(bkeImg1, true);
-                img2.setImage(image3);
-                img2lbl.setText("Towards Johor (Exit 5 To KJE)");
-
-                javafx.scene.image.Image image4 = new javafx.scene.image.Image(bkeImg2, true);
-                img3.setImage(image4);
-                img3lbl.setText("Towards Johor (Woodlands Flyover)");
-
-            }
-        }
-
-        checkpointToggle.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && newValue instanceof RadioButton) {
-                String selected = ((RadioButton) newValue).getText();
-
-                if(selected.equals("Tuas Route")) {
-                    javafx.scene.image.Image image1 = new javafx.scene.image.Image(img1src, true);
-                    img1.setImage(image1);
-                    img1lbl.setText("Towards Johor (View From Second Link)");
-
-                    javafx.scene.image.Image image2 = new javafx.scene.image.Image(img2src, true);
-                    img2.setImage(image2);
-                    img2lbl.setText("Towards Johor (Tuas Checkpoint)");
-
-                    Document ayeImg = null;
-                    try {
-                        ayeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/aye.html#trafficCameras").get();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        checkpoint.img3lbl = ("Towards Johor (After Tuas West Road)");
+                        checkpoint.img4lbl = ("Towards Singapore (From Jln Ahmad Ibrahim)");
                     }
-                    String ayeImg1 = ayeImg.getElementsByClass("card").get(0).child(1).attr("src");
-                    String ayeImg2 = ayeImg.getElementsByClass("card").get(3).child(1).attr("src");
-
-                    javafx.scene.image.Image image3 = new javafx.scene.image.Image(ayeImg1, true);
-                    img3.setImage(image3);
-                    img3lbl.setText("Towards Johor (After Tuas West Road)");
-
-                    img4lbl.setText("Towards Singapore (From Jln Ahmad Ibrahim)");
-                    javafx.scene.image.Image image4 = new javafx.scene.image.Image(ayeImg2, true);
-                    img4.setImage(image4);
                 }
-                else {
-                    javafx.scene.image.Image image1 = new javafx.scene.image.Image(img3src, true);
-                    img1.setImage(image1);
-                    img1lbl.setText("Towards Johor (From Woodland's Causeway)");
+                for (int i = 0; i < Woodlands.length; i++) {
+                    if (postcode.substring(0, 2).equals(Woodlands[i])) {
+                        checkpoint.checkpointLbl = ("Your Nearest Checkpoint is Woodlands");
 
-                    // set the one towards singapore as the last image, with the johor ones before it
-                    javafx.scene.image.Image image2 = new javafx.scene.image.Image(img4src, true);
-                    img4.setImage(image2);
-                    img4lbl.setText("Towards Singapore (From Woodland's Checkpoint)");
+                        //checkpoint.img1src = img3src;
+                        checkpoint.image1 = new javafx.scene.image.Image(img3src, true);
+                        checkpoint.img1lbl = ("Towards Johor (From Woodland's Causeway)");
 
-                    Document bkeImg = null;
-                    try {
-                        bkeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/bke.html#trafficCameras").get();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        // set the one towards singapore as the last image, with the johor ones before it
+                        checkpoint.image4 = new javafx.scene.image.Image(img4src, true);
+                        checkpoint.img4lbl = ("Towards Singapore (From Woodland's Checkpoint)");
+
+                        Document bkeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/bke.html#trafficCameras").get();
+                        String bkeImg1 = bkeImg.getElementsByClass("card").get(3).child(1).attr("src");
+                        String bkeImg2 = bkeImg.getElementsByClass("card").get(5).child(1).attr("src");
+
+                        checkpoint.image2 = new javafx.scene.image.Image(bkeImg1, true);
+                        checkpoint.img2lbl = ("Towards Johor (Exit 5 To KJE)");
+
+                        checkpoint.image3 = new javafx.scene.image.Image(bkeImg2, true);
+                        checkpoint.img3lbl = ("Towards Johor (Woodlands Flyover)");
+
                     }
-                    String bkeImg1 = bkeImg.getElementsByClass("card").get(3).child(1).attr("src");
-                    String bkeImg2 = bkeImg.getElementsByClass("card").get(5).child(1).attr("src");
-
-                    javafx.scene.image.Image image3 = new javafx.scene.image.Image(bkeImg1, true);
-                    img2.setImage(image3);
-                    img2lbl.setText("Towards Johor (Exit 5 To KJE)");
-
-                    javafx.scene.image.Image image4 = new javafx.scene.image.Image(bkeImg2, true);
-                    img3.setImage(image4);
-                    img3lbl.setText("Towards Johor (Woodlands Flyover)");
                 }
+                checkpoint.result = getRoute(postcode);
+                Hyperlink hyperlink = new Hyperlink();
+                final String URLPostcode = postcode.replaceAll(",", "").replaceAll(" ", "+");
 
+                hyperlink.setOnAction(event -> {
+                    try {
+                        Desktop.getDesktop().browse(new URI("https://www.google.com/maps/dir/" +
+                                URLPostcode));
+                    } catch (IOException k) {
+                        throw new RuntimeException(k);
+                    } catch (URISyntaxException k) {
+                        throw new RuntimeException(k);
+                    }
+                });
+
+                hyperlink.setText("Google Maps ⤴");
+
+                hyperlink.setStyle("-fx-font-size: 15.5px;");
+                hyperlink.setPrefHeight(36);
+                hyperlink.setMaxHeight(36);
+                hyperlink.setMinHeight(36);
+
+                checkpoint.hyperlink = hyperlink;
+
+                Update update;
+                try {
+                    update = getUpdates();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                checkpoint.update = update;
+
+                return checkpoint;
             }
+
+        };
+        task.setOnFailed(e -> {
+            System.out.println("Task failed: " + task.getException());
+            task.getException().printStackTrace();
         });
+        task.setOnSucceeded(e -> {
 
-        getRoute(postcode);
+            stage.setTitle("BorderApp");
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("homePage.fxml"));
-        Parent root = loader.load();
-
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-
-        stage.show();
-        FxStabilizer.stabilize(stage);
-
-        stage.iconifiedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) { // Restored from minimize
-                Platform.runLater(() -> {
-                    stage.setIconified(false);
-                    stage.hide();
+            stage.iconifiedProperty().addListener((obs, oldVal, newVal) -> {
+                if (!newVal) { // Restored from minimize
+                    Platform.runLater(() -> {
+                        stage.setIconified(false);
+                        stage.hide();
+                        stage.show();
+                        FxStabilizer.stabilize(stage);
+                        stage.toFront();
+                    });
+                }
+            });
+            stage.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    Platform.runLater(() -> {
+                        stage.setOpacity(1.0);
+                        stage.toFront();
+                    });
+                } else {
+                    stage.setOpacity(0.99); // forces compositor refresh on Windows
+                }
+            });
+            stage.iconifiedProperty().addListener((obs, wasMinimized, isNowMinimized) -> {
+                if (!isNowMinimized) {
+                    // Defensive: restore if invisible after minimize
+                    if (!stage.isShowing() || !stage.isFocused()) {
+                        Platform.runLater(() -> {
+                            try {
+                                stage.show();
+                                FxStabilizer.stabilize(stage);
+                                stage.toFront();
+                                stage.requestFocus();
+                            } catch (Exception z) {
+                                z.printStackTrace();
+                            }
+                        });
+                    }
+                }
+            });
+            stage.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+                if (isFocused && !stage.isShowing()) {
                     stage.show();
                     FxStabilizer.stabilize(stage);
                     stage.toFront();
-                });
-            }
-        });
-        stage.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                Platform.runLater(() -> {
-                    stage.setOpacity(1.0);
-                    stage.toFront();
-                });
-            } else {
-                stage.setOpacity(0.99); // forces compositor refresh on Windows
-            }
-        });
-        stage.iconifiedProperty().addListener((obs, wasMinimized, isNowMinimized) -> {
-            if (!isNowMinimized) {
-                // Defensive: restore if invisible after minimize
-                if (!stage.isShowing() || !stage.isFocused()) {
-                    Platform.runLater(() -> {
+                }
+            });
+            Platform.runLater(() -> {
+                // Force a layout pulse + scene graph re-render
+                stage.sizeToScene();
+                stage.centerOnScreen();
+
+                final Scene scene1 = stage.getScene();
+                if (scene1 != null && scene1.getRoot() != null) {
+                    scene1.getRoot().applyCss();
+                    scene1.getRoot().requestLayout();
+                }
+            });
+
+            checkpointToggle.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+                Document imgPage = null;
+                try {
+                    imgPage = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/woodlands.html#trafficCameras").get();
+                } catch (IOException z) {
+                    throw new RuntimeException(z);
+                }
+
+                String img1src = imgPage.getElementsByClass("card").get(0).child(1).attr("src");
+                String img2src = imgPage.getElementsByClass("card").get(1).child(1).attr("src");
+                String img3src = imgPage.getElementsByClass("card").get(2).child(1).attr("src");
+                String img4src = imgPage.getElementsByClass("card").get(3).child(1).attr("src");
+
+                if (newValue != null && newValue instanceof RadioButton) {
+                    String selected = ((RadioButton) newValue).getText();
+
+                    if(selected.equals("Tuas Route")) {
+                        javafx.scene.image.Image imageSelected1 = new javafx.scene.image.Image(img1src, true);
+                        img1.setImage(imageSelected1);
+                        img1lbl.setText("Towards Johor (View From Second Link)");
+
+                        javafx.scene.image.Image imageSelected2 = new javafx.scene.image.Image(img2src, true);
+                        img2.setImage(imageSelected2);
+                        img2lbl.setText("Towards Johor (Tuas Checkpoint)");
+
+                        Document ayeImg = null;
                         try {
-                            stage.show();
-                            FxStabilizer.stabilize(stage);
-                            stage.toFront();
-                            stage.requestFocus();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            ayeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/aye.html#trafficCameras").get();
+                        } catch (IOException z) {
+                            throw new RuntimeException(z);
                         }
-                    });
+                        String ayeImg1 = ayeImg.getElementsByClass("card").get(0).child(1).attr("src");
+                        String ayeImg2 = ayeImg.getElementsByClass("card").get(3).child(1).attr("src");
+
+                        javafx.scene.image.Image imageSelected3 = new javafx.scene.image.Image(ayeImg1, true);
+                        img3.setImage(imageSelected3);
+                        img3lbl.setText("Towards Johor (After Tuas West Road)");
+
+                        img4lbl.setText("Towards Singapore (From Jln Ahmad Ibrahim)");
+                        javafx.scene.image.Image imageSelected4 = new javafx.scene.image.Image(ayeImg2, true);
+                        img4.setImage(imageSelected4);
+                    }
+                    else {
+                        javafx.scene.image.Image imageSelected1 = new javafx.scene.image.Image(img3src, true);
+                        img1.setImage(imageSelected1);
+                        img1lbl.setText("Towards Johor (From Woodland's Causeway)");
+
+                        // set the one towards singapore as the last image, with the johor ones before it
+                        javafx.scene.image.Image imageSelected2 = new javafx.scene.image.Image(img4src, true);
+                        img4.setImage(imageSelected2);
+                        img4lbl.setText("Towards Singapore (From Woodland's Checkpoint)");
+
+                        Document bkeImg = null;
+                        try {
+                            bkeImg = Jsoup.connect("https://onemotoring.lta.gov.sg/content/onemotoring/home/driving/traffic_information/traffic-cameras/bke.html#trafficCameras").get();
+                        } catch (IOException z) {
+                            throw new RuntimeException(z);
+                        }
+                        String bkeImg1 = bkeImg.getElementsByClass("card").get(3).child(1).attr("src");
+                        String bkeImg2 = bkeImg.getElementsByClass("card").get(5).child(1).attr("src");
+
+                        javafx.scene.image.Image imageSelected3 = new javafx.scene.image.Image(bkeImg1, true);
+                        img2.setImage(imageSelected3);
+                        img2lbl.setText("Towards Johor (Exit 5 To KJE)");
+
+                        javafx.scene.image.Image imageSelected4 = new javafx.scene.image.Image(bkeImg2, true);
+                        img3.setImage(imageSelected4);
+                        img3lbl.setText("Towards Johor (Woodlands Flyover)");
+                    }
+
+                }
+            });
+
+            CheckpointData data = task.getValue();
+
+            routeTable.setItems(data.result);
+            routeTable.setFixedCellSize(35);
+
+
+            originLink.setText(data.originLink);
+
+            GMapsLink.getChildren().add(data.hyperlink);
+            checkpointLbl.setText(data.checkpointLbl);
+
+            if(data.checkpointLbl.toLowerCase().contains("tuas")) {
+                checkpointToggle.selectToggle(tuasRoute);
+            }
+            else {
+                checkpointToggle.selectToggle(woodlandsRoute);
+            }
+
+            for(String update: data.update.updates) {
+                if(!(update==null)) {
+                    Label label1 = new Label("   " + update.substring(16));
+                    label1.setStyle("-fx-font-size: 15.5px; -fx-margin-bottom: 3px;");
+                    Updates.getChildren().add(label1);
                 }
             }
+
+            img1.setImage(data.image1);
+            img2.setImage(data.image2);
+            img3.setImage(data.image3);
+            img4.setImage(data.image4);
+
+            Update update = data.update;
+            petrolPriceTable.setItems(update.petrolPriceData);
+            petrolPriceTable.setFixedCellSize(35);
+
+
+            SGDIn.textProperty().addListener((observable, oldValue, newValue) -> {
+                String textIn = SGDIn.getText();
+
+                try {
+                    double amount = Double.parseDouble(textIn);
+                    MYRIn.setText(String.format("%.2f", amount * update.SGDMYR));
+                }
+                catch(Exception z) {
+                    MYRIn.setPromptText("Enter a number");
+                }
+
+                if(textIn.equals("")) {
+                    MYRIn.setText("");
+                }
+
+            });
+
+            MYRIn.textProperty().addListener((observable, oldValue, newValue) -> {
+                String textIn = MYRIn.getText();
+
+                try {
+                    double amount = Double.parseDouble(textIn);
+                    SGDIn.setText(String.format("%.2f", amount * update.MYRSGD));
+                }
+                catch(Exception z) {
+                    SGDIn.setPromptText("Enter a number");
+                }
+
+                if(textIn.equals("")) {
+                    SGDIn.setText("");
+                }
+
+            });
+
         });
-        stage.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-            if (isFocused && !stage.isShowing()) {
-                stage.show();
-                FxStabilizer.stabilize(stage);
-                stage.toFront();
-            }
-        });
 
-        Platform.runLater(() -> {
-            // Force a layout pulse + scene graph re-render
-            stage.sizeToScene();
-            stage.centerOnScreen();
-
-            final Scene scene1 = stage.getScene();
-            if (scene1 != null && scene1.getRoot() != null) {
-                scene1.getRoot().applyCss();
-                scene1.getRoot().requestLayout();
-            }
-        });
-
-
-
+        new Thread(task).start();
 
     }
 }
