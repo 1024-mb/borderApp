@@ -33,7 +33,7 @@ public class getStartedController {
         String regex = "-?\\d+(\\.\\d+)?";
 
         if(Postcode != null) {
-            if(!Postcode.isEmpty() && Pattern.matches(regex, Postcode) && Postcode.length() == 6) {
+            if(!Postcode.isEmpty() && Pattern.matches(regex, Postcode) && Postcode.length() == 6 && Integer.parseInt(Postcode.substring(0, 3))<= 80) {
                 try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("C:\\Users\\FUJITSU\\JavaPrograms\\fuelPrices\\src\\main\\resources\\com\\fuelprices\\fuelprices\\registeredPostCode.txt"))) {
                     bufferedWriter.write(Postcode);
                 } catch (IOException e) {

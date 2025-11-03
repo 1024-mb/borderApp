@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="homePane" prefHeight="3000.0" prefWidth="640.0" style="-fx-background-color: white;" stylesheets="@styleUniversal.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fuelprices.fuelprices.homePageController">
+<BorderPane fx:id="homePane" prefHeight="3000.0" prefWidth="640.0" style="-fx-background-color: white;" stylesheets="@styleUniversal.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fuelprices.fuelprices.homePageController">
 
     <children>
         <!-- Empty placeholder -->
@@ -59,9 +68,9 @@
                         <RowConstraints maxHeight="965.0" minHeight="0.0" prefHeight="38.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="965.0" minHeight="0.0" prefHeight="124.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="965.0" minHeight="9.0" prefHeight="17.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="965.0" minHeight="0.0" prefHeight="32.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="965.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="1681.0" minHeight="10.0" prefHeight="1469.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="965.0" minHeight="0.0" prefHeight="37.33333333333326" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="965.0" minHeight="10.0" prefHeight="35.333251953125" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="1681.0" minHeight="10.0" prefHeight="1466.0000813802085" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="1393.0" minHeight="10.0" prefHeight="48.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="1393.0" minHeight="0.0" prefHeight="4.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="1393.0" minHeight="0.0" prefHeight="217.0" vgrow="SOMETIMES" />
@@ -76,13 +85,8 @@
                             </children>
                         </HBox>
 
-                        <!-- Live Cam Label -->
-                        <Label layoutX="10.0" layoutY="536.0" prefHeight="132.0" prefWidth="439.0" style="-fx-font-size: 22;" text="  Live Cam" textAlignment="CENTER" GridPane.rowIndex="12">
-                            <font><Font size="22.0" /></font>
-                        </Label>
-
                         <!-- Petrol Prices Label -->
-                        <Label prefHeight="36.0" prefWidth="374.0" style="-fx-font-size: 22;" text="  Petrol Prices" textAlignment="CENTER" GridPane.rowIndex="9">
+                        <Label prefHeight="36.0" prefWidth="195.0" style="-fx-font-size: 22;" text="  ⛽   Petrol Prices" textAlignment="CENTER" GridPane.rowIndex="9">
                             <font><Font size="22.0" /></font>
                         </Label>
 
@@ -90,8 +94,9 @@
                         <TableView fx:id="petrolPriceTable" editable="true" prefWidth="638.0" style="-fx-font-size: 16px;" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER">
                             <columns>
                                 <TableColumn fx:id="Country" prefWidth="68.0" resizable="false" />
-                                <TableColumn fx:id="Esso" prefWidth="154.0" text="ESSO" />
-                                <TableColumn fx:id="Shell" prefWidth="167.0" text="SHELL" />
+
+                                <TableColumn fx:id="Esso" prefWidth="132.6667251586914" text="ESSO" />
+                                <TableColumn fx:id="Shell" prefWidth="188.66661071777344" text="SHELL" />
                                 <TableColumn fx:id="SPC" minWidth="0.0" prefWidth="133.0" text="SPC" />
                                 <TableColumn fx:id="Caltex" prefWidth="85.0" text="CALTEX" />
                             </columns>
@@ -154,11 +159,13 @@
                                 <TextField fx:id="MYRIn" layoutX="378.0" layoutY="18.0" prefHeight="39.0" prefWidth="110.0" style="-fx-font-size: 18px;">
                                     <font><Font size="18.5" /></font>
                                 </TextField>
+
                             </children>
                         </AnchorPane>
 
+
                         <!-- Updates Label -->
-                        <Label prefHeight="47.0" prefWidth="439.0" style="-fx-font-size: 22;" text="  Updates" textAlignment="CENTER" GridPane.rowIndex="6">
+                        <Label prefHeight="47.0" prefWidth="439.0" style="-fx-font-size: 22;" text="  📢  Updates" textAlignment="CENTER" GridPane.rowIndex="6">
                             <font><Font size="22.0" /></font>
                         </Label>
 
@@ -166,16 +173,10 @@
                         <AnchorPane fx:id="GMapsLink" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3" />
 
                         <!-- Petrol Prices / SGD Label -->
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="15">
-                            <children>
-                                <Label layoutX="9.0" layoutY="13.0" prefHeight="36.0" prefWidth="374.0" style="-fx-font-size: 22;" text="  Petrol Prices/SGD" textAlignment="CENTER">
-                                    <font><Font size="22.0" /></font>
-                                </Label>
-                            </children>
-                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="15" />
 
                         <!-- Travel Information Label -->
-                        <Label layoutX="10.0" layoutY="423.0" prefHeight="47.0" prefWidth="439.0" style="-fx-font-size: 22;" text=" Travel Information" textAlignment="CENTER">
+                        <Label layoutX="10.0" layoutY="423.0" prefHeight="47.0" prefWidth="439.0" style="-fx-font-size: 22;" text=" 🕒  Travel Information" textAlignment="CENTER">
                             <font><Font size="22.0" /></font>
                         </Label>
 
@@ -186,25 +187,24 @@
                            <font>
                               <Font size="14.0" />
                            </font></Hyperlink>
-    <!--                        <Hyperlink fx:id="originLink2" layoutX="196.0" layoutY="4.0" onAction="#handleClick" prefHeight="34.0" prefWidth="45.0">-->
-    <!--                            <graphic>-->
-    <!--                                <FontIcon styleClass="font-icon" iconColor="#4285F4" iconLiteral="fas-map-marker-alt"/>-->
-    <!--                            </graphic>-->
-
-    <!--                        </Hyperlink>-->
+                        <Hyperlink fx:id="originLink1" layoutX="213.0" layoutY="16.0" onAction="#handleClick" prefHeight="21.0" prefWidth="47.0" text="Change">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Hyperlink>
                           </children>
                        </AnchorPane>
 
                         <!-- Route Selection -->
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="13">
                             <children>
-                                <RadioButton id="tuasRoute" fx:id="tuasRoute" layoutX="33.0" layoutY="6.0" mnemonicParsing="false" text="Tuas Route">
+                                <RadioButton id="tuasRoute" fx:id="tuasRoute" layoutX="115.0" layoutY="7.0" mnemonicParsing="false" text="Tuas Route">
                                     <toggleGroup>
                                         <ToggleGroup fx:id="checkpointToggle" />
                                     </toggleGroup>
                                     <font><Font size="15.5" /></font>
                                 </RadioButton>
-                                <RadioButton fx:id="woodlandsRoute" layoutX="264.0" layoutY="6.0" mnemonicParsing="false" text="Woodlands Route" toggleGroup="$checkpointToggle">
+                                <RadioButton fx:id="woodlandsRoute" layoutX="346.0" layoutY="7.0" mnemonicParsing="false" text="Woodlands Route" toggleGroup="$checkpointToggle">
                                     <font><Font size="15.5" /></font>
                                 </RadioButton>
                             </children>
@@ -212,6 +212,11 @@
 
                         <!-- Empty Placeholder -->
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="16" />
+                  <Label prefHeight="37.0" prefWidth="384.0" style="-fx-font-size: 22;" text="  📹  Live Cam" textAlignment="CENTER" GridPane.rowIndex="12">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
 
                     </children>
                 </GridPane>

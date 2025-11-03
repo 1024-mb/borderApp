@@ -507,7 +507,7 @@ public class homePageController extends Application implements Initializable {
                 hyperlink.setOnAction(event -> {
                     try {
                         Desktop.getDesktop().browse(new URI("https://www.google.com/maps/dir/" +
-                                URLPostcode));
+                                URLPostcode + " " + "Singapore"));
                     } catch (IOException k) {
                         throw new RuntimeException(k);
                     } catch (URISyntaxException k) {
@@ -696,8 +696,20 @@ public class homePageController extends Application implements Initializable {
 
             for(String update: data.update.updates) {
                 if(!(update==null)) {
-                    Label label1 = new Label("   " + update.substring(16));
-                    label1.setStyle("-fx-font-size: 15.5px; -fx-margin-bottom: 3px;");
+                    String prefix = "";
+                    
+                    if (update.toLowerCase().contains("traffic")) {
+                        prefix = " \uD83D\uDEA6  ";
+                    } else if(update.toLowerCase().contains("roadworks")) {
+                        prefix = " \uD83D\uDEA7  ";
+                    } else if(update.toLowerCase().contains("breakdown")) {
+                        prefix = " \uD83D\uDEE0\uFE0F  ";
+                    } else if(update.toLowerCase().contains("accident")) {
+                        prefix = " ⛐  ";
+                    }
+                    
+                    Label label1 = new Label(prefix + update.substring(10, 15) + "  " + update.substring(15));
+                    label1.setStyle("-fx-font-size: 14.5px; -fx-margin-bottom: 3px;");
                     Updates.getChildren().add(label1);
                 }
             }
