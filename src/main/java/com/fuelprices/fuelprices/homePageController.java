@@ -681,7 +681,6 @@ public class homePageController extends Application implements Initializable {
             routeTable.setItems(data.result);
             routeTable.setFixedCellSize(35);
 
-
             originLink.setText(data.originLink);
 
             GMapsLink.getChildren().add(data.hyperlink);
@@ -695,20 +694,21 @@ public class homePageController extends Application implements Initializable {
             }
 
             for(String update: data.update.updates) {
+
                 if(!(update==null)) {
-                    String prefix = "";
-                    
-                    if (update.toLowerCase().contains("traffic")) {
-                        prefix = " \uD83D\uDEA6  ";
-                    } else if(update.toLowerCase().contains("roadworks")) {
-                        prefix = " \uD83D\uDEA7  ";
-                    } else if(update.toLowerCase().contains("breakdown")) {
-                        prefix = " \uD83D\uDEE0\uFE0F  ";
+                    String prefix = "     ";
+
+                    if (update.toLowerCase().contains("traffic") || update.toLowerCase().contains("obstacle") || update.toLowerCase().contains("stationary")) {
+                        prefix = "   \uD83D\uDEA6   ";
+                    } else if(update.toLowerCase().contains("roadworks") || update.toLowerCase().contains("road works")) {
+                        prefix = " \uD83D\uDC77\uD83C\uDFFC\u200D♂\uFE0F  ";
+                    } else if(update.toLowerCase().contains("breakdown") || update.toLowerCase().contains("break down")) {
+                        prefix = "  \uD83D\uDEE0  ";
                     } else if(update.toLowerCase().contains("accident")) {
-                        prefix = " ⛐  ";
+                        prefix = "  ⛐  ";
                     }
-                    
-                    Label label1 = new Label(prefix + update.substring(10, 15) + "  " + update.substring(15));
+
+                    Label label1 = new Label(prefix + update.substring(11, 16) + "  " + update.substring(16));
                     label1.setStyle("-fx-font-size: 14.5px; -fx-margin-bottom: 3px;");
                     Updates.getChildren().add(label1);
                 }

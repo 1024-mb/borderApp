@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
@@ -18,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="homePane" prefHeight="3000.0" prefWidth="640.0" style="-fx-background-color: white;" stylesheets="@styleUniversal.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fuelprices.fuelprices.homePageController">
+<BorderPane fx:id="homePane" prefHeight="3000.0" prefWidth="640.0" style="-fx-background-color: white;" stylesheets="@styleUniversal.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fuelprices.fuelprices.homePageController">
 
     <children>
         <!-- Empty placeholder -->
@@ -81,7 +86,7 @@
                         <!-- Updates Section -->
                         <HBox GridPane.rowIndex="8">
                             <children>
-                                <VBox fx:id="Updates" prefHeight="259.0" prefWidth="678.0" spacing="15.0" stylesheets="@styleUniversal.css" VBox.vgrow="ALWAYS" />
+                                <VBox fx:id="Updates" prefWidth="678.0" spacing="15.0" stylesheets="@styleUniversal.css" VBox.vgrow="ALWAYS" />
                             </children>
                         </HBox>
 
@@ -187,9 +192,9 @@
                            <font>
                               <Font size="14.0" />
                            </font></Hyperlink>
-                        <Hyperlink fx:id="originLink1" layoutX="213.0" layoutY="16.0" onAction="#handleClick" prefHeight="21.0" prefWidth="47.0" text="Change">
+                        <Hyperlink fx:id="originLink1" layoutX="211.0" layoutY="7.0" onAction="#handleClick" prefHeight="28.0" prefWidth="64.0" text="Change">
                            <font>
-                              <Font size="10.0" />
+                              <Font size="14.0" />
                            </font>
                         </Hyperlink>
                           </children>
@@ -212,7 +217,7 @@
 
                         <!-- Empty Placeholder -->
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="16" />
-                  <Label prefHeight="37.0" prefWidth="384.0" style="-fx-font-size: 22;" text="  📹  Live Cam" textAlignment="CENTER" GridPane.rowIndex="12">
+                  <Label prefHeight="36.0" prefWidth="627.0" style="-fx-font-size: 22;" text="  📹  Live Cam" textAlignment="CENTER" GridPane.rowIndex="12">
                      <font>
                         <Font size="22.0" />
                      </font>
