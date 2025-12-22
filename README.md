@@ -1,6 +1,6 @@
 # Border App
 
-⚠️ Please watch my Demo (1 minute): https://youtu.be/gYFcIpTzfH0 ⚠️
+⚠️ Please watch my Demo (1-min): <a href="https://youtu.be/gYFcIpTzfH0" target="_blank">https://youtu.be/gYFcIpTzfH0</a> ⚠️
 
 
 An app that tracks cross-border data (Singapore-Malaysia land border). Displays traffic updates, currency exchanges, road photography and distances to common Malaysian landmarks 
