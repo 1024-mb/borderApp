@@ -507,7 +507,7 @@ public class homePageController extends Application implements Initializable {
                 hyperlink.setOnAction(event -> {
                     try {
                         Desktop.getDesktop().browse(new URI("https://www.google.com/maps/dir/" +
-                                URLPostcode + " " + "Singapore"));
+                                URLPostcode + "," + "Singapore"));
                     } catch (IOException k) {
                         throw new RuntimeException(k);
                     } catch (URISyntaxException k) {
