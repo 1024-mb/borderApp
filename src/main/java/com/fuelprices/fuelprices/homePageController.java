@@ -249,7 +249,7 @@ public class homePageController extends Application implements Initializable {
         final HttpClient generalClient = HttpClient.newHttpClient();
         HttpRequest getUpdates = HttpRequest.newBuilder()
                 .uri(URI.create("https://datamall2.mytransport.sg/ltaodataservice/TrafficIncidents"))
-                .header("AccountKey", "DYcp2xF6QNKde4zceePCkw==")
+                .header("AccountKey", System.getenv("ACCOUNTKEYLTA");)
                 .GET()
                 .build();
 
@@ -317,7 +317,7 @@ public class homePageController extends Application implements Initializable {
 
 
         HttpRequest getMY = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.exchangeratesapi.io/v1/latest?access_key=aab65faca79a2abd4c8761760eb607bc&symbols=SGD,MYR&format=1"))
+                .uri(URI.create("https://api.exchangeratesapi.io/v1/latest?access_key=" + System.getenv("FINANCEKEY") + "&symbols=SGD,MYR&format=1"))
                 .GET()
                 .build();
 
@@ -764,3 +764,4 @@ public class homePageController extends Application implements Initializable {
 
     }
 }
+
