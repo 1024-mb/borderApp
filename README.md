@@ -3,7 +3,7 @@
 ⚠️ Please watch my Demo (1-min): <a href="https://youtu.be/QD_2CZFQSnc" target="_blank" rel="noopener noreferrer">https://youtu.be/QD_2CZFQSnc </a> ⚠️
 
 
-An app that tracks cross-border data (Singapore-Malaysia land border). Displays traffic updates, currency exchanges, road photography and distances to common Malaysian landmarks 
+An app that tracks cross-border data (Singapore-Malaysia land border). Displays **traffic updates, currency exchanges, road photography and distances** to common Malaysian landmarks 
 from a user-set Postcode.
 Parses road data from the singapore government to extract travel information and display the latest updates for traffic. Extracts petrol pricing data
 from government and private companies' websites to give users an accurate overview of current fuel prices.
