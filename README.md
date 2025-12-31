@@ -7,6 +7,7 @@ An app that tracks cross-border data (Singapore-Malaysia land border). Displays 
 from a user-set Postcode.
 Parses road data from the singapore government to extract travel information and display the latest updates for traffic. Extracts petrol pricing data
 from government and private companies' websites to give users an accurate overview of current fuel prices.
+
 ## Requirements
 
 - Java 11 or newer (Java 17+ recommended).
@@ -51,7 +52,7 @@ If you run without the plugin and you installed JavaFX separately, add VM option
 --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.fxml
 ```
 
-## Project structure (key files)
+## Directory Guide (key files)
 
 - `src/main/java/module-info.java` — module declaration.
 - `src/main/java/com/fuelprices/fuelprices/Launcher.java` — application entry / main launcher.
