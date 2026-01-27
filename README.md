@@ -1,86 +1,181 @@
-# Border App
+# Border App – Cross-Border Intelligence Application (SG–MY)
 
-⚠️ Please watch my Demo (20s): <a href="https://youtu.be/QD_2CZFQSnc" target="_blank" rel="noopener noreferrer">[https://youtu.be/QD_2CZFQSnc](https://youtu.be/uZfmny_ybaA) </a> ⚠️
+⚠️ **20-second demo:** https://youtu.be/QD_2CZFQSnc ⚠️
 
+Border App is a Java-based desktop application that tracks and visualises cross-border data for the Singapore–Malaysia land border. It provides real-time and near-real-time insights into traffic conditions, currency exchange rates, fuel prices, road imagery, and distances to key Malaysian landmarks based on a user-registered postcode.
 
-An app that tracks cross-border data (Singapore-Malaysia land border). Displays **traffic updates, currency exchanges, road photography and distances** to common Malaysian landmarks 
-from a user-set Postcode.
-Parses road data from the singapore government to extract travel information and display the latest updates for traffic. Extracts petrol pricing data
-from government and private companies' websites to give users an accurate overview of current fuel prices.
+The application parses live road and traffic data published by the Singapore government and aggregates petrol pricing information from both government and private-sector sources to present users with an accurate and consolidated view of cross-border travel conditions.
+
+---
+
+## Table of Contents
+
+- Overview
+- Key Features
+- Technologies Used
+- Requirements
+- Build Instructions
+- Run Instructions
+- Project Structure
+- Configuration and Data
+- Troubleshooting
+- Contributing
+
+---
+
+## Overview
+
+Border App is designed to assist commuters and travellers who regularly cross the Singapore–Malaysia land border. By consolidating multiple data sources into a single interface, the app reduces friction in travel planning and improves situational awareness before and during cross-border trips.
+
+---
+
+## Key Features
+
+- Live traffic updates for the Singapore–Malaysia land border
+- Road imagery and photography for situational awareness
+- Currency exchange rate tracking
+- Petrol price aggregation from multiple sources
+- Distance calculation to common Malaysian landmarks
+- User-registered postcode for personalised distance calculations
+- Government data parsing for reliable travel information
+- JavaFX-based desktop user interface
+
+---
+
+## Technologies Used
+
+### Core
+- Java (Java 11 minimum, Java 17+ recommended)
+- JavaFX (UI framework)
+- Maven (build and dependency management)
+
+### Data Sources
+- Singapore government traffic and road data
+- Government and private-sector petrol pricing websites
+
+### UI
+- JavaFX FXML
+- Embedded HTML rendering for selected views
+
+---
 
 ## Requirements
 
-- Java 11 or newer (Java 17+ recommended).
-- Maven (or use the provided Maven wrapper: `mvnw` / `mvnw.cmd`).
-- If running without a JavaFX-aware Maven plugin or a bundled JavaFX, you will need a JavaFX SDK and VM module flags.
+- Java 11 or newer (Java 17 or newer recommended)
+- Maven  
+  - Alternatively, use the provided Maven wrapper (`mvnw` / `mvnw.cmd`)
+- JavaFX SDK (required if JavaFX is not bundled with your JDK)
 
-## Build
+If running without a JavaFX-aware Maven plugin or a bundled JavaFX runtime, VM module flags must be supplied.
 
-- Windows (using wrapper):
+---
 
-  ```powershell
-  .\mvnw.cmd clean package
-  ```
+## Build Instructions
 
-- macOS / Linux (using wrapper):
+### Windows (using Maven wrapper)
 
-  ```bash
-  ./mvnw clean package
-  ```
+```bash
+.\mvnw.cmd clean package
+```
 
-After a successful build, the artifact(s) will appear under `target/`.
+### macOS / Linux (using Maven wrapper)
 
-## Run
+```bash
+./mvnw clean package
+```
 
-- Run from the IDE: set `com.fuelprices.fuelprices.Launcher` as the main class and run.
+After a successful build, the generated artifact(s) will be located in the `target/` directory.
 
-- Run with Maven (if the `javafx-maven-plugin` is configured):
+---
 
-  ```powershell
-  .\mvnw.cmd javafx:run
-  ```
+## Run Instructions
 
-- Run the packaged jar (if the project produces an executable jar):
+### Run from an IDE
 
-  ```powershell
-  java -jar target/<artifact>.jar
-  ```
+Set the following class as the main entry point and run:
 
-If you run without the plugin and you installed JavaFX separately, add VM options (example):
+```
+com.fuelprices.fuelprices.Launcher
+```
+
+### Run with Maven (if `javafx-maven-plugin` is configured)
+
+```bash
+.\mvnw.cmd javafx:run
+```
+
+### Run the packaged JAR (if executable)
+
+```bash
+java -jar target/<artifact>.jar
+```
+
+### Running with a separate JavaFX SDK
+
+If JavaFX is installed separately, add the following VM options (example):
 
 ```text
 --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.fxml
 ```
 
-## Directory Guide (key files)
+---
 
-- `src/main/java/module-info.java` — module declaration.
-- `src/main/java/com/fuelprices/fuelprices/Launcher.java` — application entry / main launcher.
-- `src/main/java/com/fuelprices/fuelprices/getStarted.java` — controller/logic for the get-started flow.
-- `src/main/java/com/fuelprices/fuelprices/getStartedController.java` — controller for get-started FXML.
-- `src/main/java/com/fuelprices/fuelprices/homePageController.java` — controller for the home page UI.
-- `src/main/java/com/fuelprices/fuelprices/settingsController.java` — controller for settings UI.
-- `src/main/java/com/fuelprices/fuelprices/PetrolPrices.java` — classes handling petrol price data.
+## Project Structure
 
-- `src/main/resources/com/fuelprices/fuelprices/homePage.fxml` — main home page FXML.
-- `src/main/resources/com/fuelprices/fuelprices/getStarted.fxml` — get-started screen.
-- `src/main/resources/com/fuelprices/fuelprices/settingsPage.fxml` — settings page.
-- `src/main/resources/com/fuelprices/fuelprices/registeredPostCode.txt` — persisted postcode file.
-- `src/main/resources/com/fuelprices/fuelprices/webPageRender/base.html` — embedded HTML template used by the app.
+```text
+src/main/java/
+├── module-info.java
+├── com/fuelprices/fuelprices/
+│   ├── Launcher.java
+│   ├── getStarted.java
+│   ├── getStartedController.java
+│   ├── homePageController.java
+│   ├── settingsController.java
+│   └── PetrolPrices.java
 
-## Configuration & Data
+src/main/resources/
+├── com/fuelprices/fuelprices/
+│   ├── homePage.fxml
+│   ├── getStarted.fxml
+│   ├── settingsPage.fxml
+│   ├── registeredPostCode.txt
+│   └── webPageRender/
+│       └── base.html
+```
 
-- The app uses `registeredPostCode.txt` to store a registered postcode. You can inspect or edit this file at runtime if needed: `src/main/resources/com/fuelprices/fuelprices/registeredPostCode.txt`.
+---
+
+## Configuration and Data
+
+The application stores the user’s registered postcode in the following file:
+
+```
+src/main/resources/com/fuelprices/fuelprices/registeredPostCode.txt
+```
+
+This file may be inspected or edited at runtime if required. It is used to calculate distances to Malaysian landmarks and personalise location-based features.
+
+---
 
 ## Troubleshooting
 
-- Missing JavaFX modules error: ensure your runtime includes JavaFX or add the `--module-path`/`--add-modules` VM args shown above.
-- If FXML URLs or resources fail to load, confirm resource paths are correct relative to the package (`com/fuelprices/fuelprices/...`).
+- **Missing JavaFX modules**  
+  Ensure your Java runtime includes JavaFX, or supply the required `--module-path` and `--add-modules` VM options.
+
+- **FXML or resource loading failures**  
+  Verify that resource paths are correct and match the package structure  
+  (`com/fuelprices/fuelprices/...`).
+
+- **Build failures**  
+  Confirm Java and Maven versions meet the minimum requirements.
+
+---
 
 ## Contributing
 
-- Fork the repo, create a feature branch, and open a pull request describing your change.
-- Keep changes small and focused; update resources or FXML only when necessary.
+1. Fork the repository
+2. Create a feature branch
+3. Commit focused, well-scoped changes
+4. Open a pull request with a clear description of the modification
 
-
-
+Please keep changes minimal and update FXML or resource files only when necessary.
