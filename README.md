@@ -1,6 +1,6 @@
 # Border App – Cross-Border Intelligence Application (SG–MY)
 
-⚠️ **20-second demo:** https://youtu.be/QD_2CZFQSnc ⚠️
+⚠️ **20-second demo:** [https://youtu.be/QD_2CZFQSnc](https://www.youtube.com/watch?v=uZfmny_ybaA&list=PLnL6WpWjTSrJmPOEB30jLO2XghAlz9ZEn&index=3) ⚠️
 
 Border App is a Java-based desktop application that tracks and visualises cross-border data for the Singapore–Malaysia land border. It provides real-time and near-real-time insights into traffic conditions, currency exchange rates, fuel prices, road imagery, and distances to key Malaysian landmarks based on a user-registered postcode.
 
